@@ -2,7 +2,7 @@
 
 **Autonomous AI Data Scientist Platform**
 
-AI Data Scientist is an end-to-end AI system that automatically analyzes datasets, trains machine learning models, and generates business insights using large language models. The platform simulates the workflow of a **junior data scientist**, allowing users to upload datasets, explore insights, train models, and interact with the data through an AI chat interface.
+InsightForge AI is an end-to-end AI system that automatically analyzes datasets, trains machine learning models, and generates business insights using large language models. The platform simulates the workflow of a **junior data scientist**, allowing users to upload datasets, explore insights, train models, and interact with the data through an AI chat interface.
 
 This project combines **Machine Learning pipelines, LLM reasoning, automated analysis, and interactive dashboards** into a single application.
 
