@@ -28,6 +28,9 @@ User → Streamlit Dashboard → Data Processing Pipeline → Model Training Eng
 * Handles missing values automatically
 * Encodes categorical variables
 * Scales numerical features
+* Handles data imbalancing
+* Handles outliers
+* Handles Overfitting condition
 * Prepares data for model training
 
 ### Automated EDA
