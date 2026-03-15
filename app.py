@@ -4,6 +4,7 @@ from modules.data_analyzer import analyze_data
 from modules.data_cleaner import clean_data
 from modules.eda import (
     plot_target_distribution,
+    plot_outlier_boxplot,
     plot_correlation_heatmap,
     plot_feature_distribution
 )
@@ -16,7 +17,7 @@ from llm.insight_generator import generate_insights
 from llm.dataframe_agent import create_dataframe_agent
 from modules.predictor import make_prediction
 from modules.report_generator import generate_report
-
+import time
 
 @st.cache_resource
 def load_agent(df):
@@ -60,7 +61,7 @@ with tab1:
         st.write(df.head())
 
         summary = analyze_data(df)
-
+        
         st.subheader("Dataset Summary")
 
         st.write("Rows:", summary["rows"])
@@ -70,18 +71,22 @@ with tab1:
         st.write("Categorical Columns:", summary["categorical_columns"])
 
         st.write("Missing Values:", summary["missing_values"])
+        st.write("Total Missing Values:", summary["total_missing_values"])
 
         target_column = st.selectbox("Select Target Column", df.columns)
 
         if st.button("Prepare Data"):
 
-            X, y = clean_data(df, target_column)
-
-            st.session_state["X"] = X
-            st.session_state["y"] = y
-
-            st.success("Data prepared successfully!")
-
+            X, y, warnings = clean_data(df, target_column)
+            
+            if warnings:
+                for w in warnings:
+                    st.warning(w)
+            else:
+                st.session_state["X"] = X
+                st.session_state["y"] = y
+                st.success("Data prepared successfully!")
+            
 
 with tab2:
 
@@ -89,6 +94,10 @@ with tab2:
 
         st.subheader("Target Distribution")
         st.pyplot(plot_target_distribution(st.session_state["y"]))
+
+        st.subheader("Outlier Distribution")
+        for fig in plot_outlier_boxplot(st.session_state["X"]):
+            st.pyplot(fig)
 
         st.subheader("Correlation Heatmap")
         st.pyplot(plot_correlation_heatmap(st.session_state["X"]))
@@ -100,27 +109,51 @@ with tab2:
 
 with tab3:
 
-    if "X" in st.session_state and "y" in st.session_state:
+    if st.button("Train Models"):
 
-        if st.button("Train Models"):
+        with st.spinner("Training models... please wait ⏳"):
+
+            start_time = time.time()
 
             problem_type, results, best_model_name, best_model, conf_matrix = train_models(
                 st.session_state["X"],
                 st.session_state["y"]
             )
 
-            st.session_state["results"] = results
-            st.session_state["best_model"] = best_model
-            st.session_state["best_model_name"] = best_model_name
-            st.session_state["conf_matrix"] = conf_matrix
+            end_time = time.time()
+            training_time = round(end_time - start_time, 2)
+
+        st.success(f"Training completed in {training_time} seconds 🚀")
+
+        st.session_state["results"] = results
+        st.session_state["best_model"] = best_model
+        st.session_state["best_model_name"] = best_model_name
+        st.session_state["conf_matrix"] = conf_matrix
             
 
         if "results" in st.session_state:
 
             st.subheader("Model Performance")
 
-            for model, score in st.session_state["results"].items():
-                st.write(f"{model}: {score}")
+            for model, info in st.session_state["results"].items():
+
+                st.markdown(f"### {model}")
+
+                metrics = info["metrics"]
+
+                if isinstance(metrics, dict):  # classification
+
+                    for m, v in metrics.items():
+                        st.write(f"{m}: {round(v, 4)}")
+
+                else:  # regression
+                    st.write(f"R2 Score: {round(metrics, 4)}")
+
+                st.write(
+                    f"Cross Validation Score: {round(info['cv_mean'],4)} ± {round(info['cv_std'],4)}"
+                )
+
+                st.divider()
 
             st.subheader("Best Model")
             st.write(st.session_state["best_model_name"])

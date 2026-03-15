@@ -9,6 +9,7 @@ langchain
 langchain-groq
 python-dotenv
 langchain-experimental
+imblearn
 tabulate
 joblib
 fpdf

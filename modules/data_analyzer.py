@@ -11,5 +11,6 @@ def analyze_data(df):
     summary["categorical_columns"] = df.select_dtypes(include=["object"]).columns.tolist()
 
     summary["missing_values"] = df.isnull().sum().to_dict()
+    summary["total_missing_values"] = df.isnull().sum().sum()
 
     return summary

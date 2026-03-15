@@ -26,7 +26,25 @@ def plot_target_distribution(y, save=False):
 
     return fig
 
+def plot_outlier_boxplot(X,save=False):
+    figs = []
 
+    numeric = X.select_dtypes(include="number")
+    for col in numeric.columns[:3]:
+        fig, ax = plt.subplots(figsize=(5,3))
+        sns.boxplot(X[col])
+
+        ax.set_title(f"{col} Distribution")
+
+        plt.tight_layout()
+
+        if save:
+            os.makedirs("saved_charts", exist_ok=True)
+            fig.savefig(f"saved_charts/outlier_distribution_{col}.png")
+
+        figs.append(fig)
+        
+    return figs
 
 def plot_correlation_heatmap(X, save=False):
 
