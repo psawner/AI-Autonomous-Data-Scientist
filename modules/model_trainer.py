@@ -95,6 +95,9 @@ def train_models(X, y):
         X, y, test_size=0.2, random_state=42
     )
 
+    X_train = handle_outliers(X_train)
+    X_test = handle_outliers(X_test)
+
 
     results = {}
     best_model = None
