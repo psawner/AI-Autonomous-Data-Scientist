@@ -6,6 +6,7 @@ def clean_data(df, target_column):
 
     df = df.copy()
     warnings = []
+    
     # target missing value check
     target_missing_ratio = df[target_column].isnull().mean()
 

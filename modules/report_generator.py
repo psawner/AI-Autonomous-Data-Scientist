@@ -66,16 +66,18 @@ def generate_report(insights, results):
     # Table Rows
     pdf.set_font("Arial", "", 12)
 
-    best_model = max(results, key=results.get)
+    best_model = max(results, key=lambda x: results[x]["cv_mean"])
 
-    for model, score in results.items():
-
-        if model == best_model:
-            pdf.set_font("Arial", "B", 12)
-        else:
-            pdf.set_font("Arial", "", 12)
+    for model, info in results.items():
 
         pdf.cell(90, 10, model, border=1)
+
+        # Handle classification vs regression
+        if isinstance(info["metrics"], dict):
+            score = info["cv_mean"]   
+        else:
+            score = info["cv_mean"]   
+
         pdf.cell(90, 10, f"{score:.4f}", border=1, ln=True)
 
     pdf.ln(10)

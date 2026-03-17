@@ -6,7 +6,10 @@ seaborn
 scikit-learn
 plotly
 langchain
+groq
 langchain-groq
+langchain-core
+langchain-community
 python-dotenv
 langchain-experimental
 imblearn

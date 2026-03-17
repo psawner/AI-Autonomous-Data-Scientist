@@ -98,7 +98,6 @@ def train_models(X, y):
     X_train = handle_outliers(X_train)
     X_test = handle_outliers(X_test)
 
-
     results = {}
     best_model = None
     best_model_name = None
